@@ -1,0 +1,179 @@
+#include <iostream>
+#include <cstdlib>
+// begin AI slop
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#elif defined(__linux__) || defined(__APPLE__)
+    system("clear");
+#else
+    std::cout << "Clear screen not supported on this OS" << endl;
+#endif
+}
+// end AI slop
+using namespace std;
+
+void printMatch (int array[][3]) {
+    string pp = "0";
+    cout << "1    2    3" << endl;
+    for (int u=0; u<3; u++) {
+        for (int i=0; i<3; i++) {
+            if (array[u][i] == 1) {
+                pp = "X";
+            }
+            else if (array[u][i] == 2) {
+                pp = "O";
+            }
+            else if (array[u][i] == 0) {
+                pp = " ";
+            }
+            cout << "[" << pp << "] ";
+    }
+        cout << char('A' + u);
+        cout << endl;
+    }
+}
+
+string turnCheck (bool Oturn) {
+    if (Oturn == false) {
+        return "X";
+    }
+    else {
+        return "O";
+    }
+}
+
+int letterToNumber (string input) {
+    if (input == "A" || input == "a") {
+        return 0;
+    }
+    if (input == "B" || input == "b") {
+        return 1;
+    }
+    if (input == "C" || input == "c") {
+        return 2;
+    }
+    else {
+        return 400;
+    }
+}
+
+int changeBoard(int array[][3], int row, int column, bool Oturn) {
+    if (array[row][column] == 0) {
+        if (Oturn == false) {
+            return 1;
+        }
+        else if (Oturn == true) {
+            return 2;
+        }
+    }
+    else {
+        return 8008;
+    }
+    return 8008008;
+}
+
+int checkWin(int array[][3]) {
+    int empty_cells = 0;
+    for (int i=0; i<3; i++){ //checks all horizontal for win
+        if (array[i][0]==array[i][1] && array[i][1]==array[i][2] && array[i][0] != 0) { //check all horizontal is the same AND arent zero bc zero is default
+            if (array[i][0] == 1) {
+                return 1; //X wins
+            }
+            else if (array[i][0] == 2) {
+                return 2; //O wins
+            }
+        }
+    }
+    for (int i=0; i<3; i++){ //checks all vertical for win
+        if (array[0][i]==array[1][i] && array[1][i]==array[2][i] && array[0][i] != 0) { //same as horizontal
+            if (array[0][i] == 1) {
+                return 1; //X wins
+            }
+            else if (array[0][i] == 2) {
+                return 2; //O wins
+            }
+        }
+    }
+    if (array[0][0] == array[1][1] && array[1][1] == array[2][2] && array[0][0] != 0) { //diagonal from left to right
+        if (array[0][0] == 1) {
+            return 1;
+        }
+        else if (array[0][0] == 2) {
+            return 2;
+        }
+    }
+    if (array[2][0] == array[1][1] && array[1][1] == array[0][2] && array[2][0] !=0) { //diagonal from right to left
+        if (array[2][0] == 1) {
+            return 1;
+        }
+        else if (array[2][0] == 2) {
+            return 2;
+        }
+    }
+    for (int u=0; u<3; u++) {
+        for (int i=0; i<3; i++) {
+            if (array[u][i] == 0) {
+                empty_cells++; //add 1 for every empty cell
+            }
+        }
+    }
+    if (empty_cells == 0) {
+        return 3; //tied match because no winner yet no empty cells left
+    }
+    return 0;
+}
+
+int main(){
+    int board[3][3]={0};
+    string user_location_row = "init"; // has to be a string bc some bullshit with pointers happen using char and you cant input ABC into an integer
+    int location_row = 0;// therefore the correct solution is to let the user input into a string and THEN internally convert back into an int via letterToNumber up there
+    int user_location_column = 0;
+    string user_initializer = "init";
+    string game_turn = "init";
+    bool O_turn = false;
+    cout << "tic tac toe" << endl;
+    cout << "type [yes] to play" << endl;
+    cin >> user_initializer;
+    if (user_initializer == "yes" || user_initializer == "y" || user_initializer == "Y"){
+        while (checkWin(board) == 0) {
+        clearScreen();
+        printMatch(board);
+        game_turn = turnCheck(O_turn);
+        cout << "it is " << game_turn << "'s turn" << endl;
+        cout << "COLUM:";
+        cin >> user_location_column;
+        user_location_column = user_location_column - 1; //arrays start at zero because some smartass decided c++ isnt hard enough
+        cout << "ROW:";
+        cin >> user_location_row;
+        location_row = letterToNumber(user_location_row);
+        if (location_row == 400) {
+            clearScreen();
+            cout << "that's not a row, i was expecting A, B or C";
+            return 400;
+        }
+        changeBoard(board, location_row, user_location_column, O_turn);
+        if (changeBoard(board, location_row, user_location_column, O_turn) == 8008) {
+            clearScreen();
+            cout << "occupied spot, exiting..." << endl;
+            return 8008;
+        }
+        else {
+            board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
+        }
+        printMatch(board);
+        O_turn = !O_turn;
+        }
+        if (checkWin(board) == 1) {
+            cout << "X wins" << endl;
+        }
+        else if (checkWin(board) == 2) {
+            cout << "O wins" << endl;
+        }
+        else if (checkWin(board) == 3) {
+            cout << "tied match" << endl;
+        }
+    }
+    return 0;
+}
