@@ -133,24 +133,24 @@ int main(){
     string user_initializer = "init";
     string game_turn = "init";
     bool O_turn = false;
-    cout << "tic tac toe" << endl;
-    cout << "type [yes] to play" << endl;
+    cout << "Tic-Tac-Toe" << endl;
+    cout << "Type [yes] to play" << endl;
     cin >> user_initializer;
     if (user_initializer == "yes" || user_initializer == "y" || user_initializer == "Y"){
         while (checkWin(board) == 0) {
         clearScreen();
         printMatch(board);
         game_turn = turnCheck(O_turn);
-        cout << "it is " << game_turn << "'s turn" << endl;
-        cout << "COLUM:";
+        cout << "It is " << game_turn << "'s turn" << endl;
+        cout << "Column[1,2,3]:";
         cin >> user_location_column;
         user_location_column = user_location_column - 1; //arrays start at zero because some smartass decided c++ isnt hard enough
-        cout << "ROW:";
+        cout << "Row[A,B,C]:";
         cin >> user_location_row;
         location_row = letterToNumber(user_location_row);
         if (location_row == 400) {
             clearScreen();
-            cout << "that's not a row, i was expecting A, B or C";
+            cout << "invalid input, exiting...";
             return 400;
         }
         changeBoard(board, location_row, user_location_column, O_turn);
@@ -166,13 +166,13 @@ int main(){
         O_turn = !O_turn;
         }
         if (checkWin(board) == 1) {
-            cout << "X wins" << endl;
+            cout << "X wins." << endl;
         }
         else if (checkWin(board) == 2) {
-            cout << "O wins" << endl;
+            cout << "O wins." << endl;
         }
         else if (checkWin(board) == 3) {
-            cout << "tied match" << endl;
+            cout << "Tied match." << endl;
         }
     }
     return 0;
