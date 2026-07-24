@@ -8,4 +8,4 @@ A simple beginner terminal Tic-Tac-Toe game written in C++.
 - Linux and Windows terminal support.
 
 ## Notes:
-Made as a learning project and therefore will not be maintained.
+Made as a learning project.
