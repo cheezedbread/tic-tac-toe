@@ -1,7 +1,8 @@
 #include <iostream>
 #include <cstdlib>
-// begin AI slop
+#include <random>
 
+// begin AI slop
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -133,8 +134,11 @@ int main(){
     string user_initializer = "init";
     string game_turn = "init";
     bool O_turn = false;
-    cout << "Tic-Tac-Toe" << endl;
-    cout << "Type [yes] to play" << endl;
+    random_device rd;
+    mt19937 rng(rd());
+    uniform_int_distribution<int> dist(0, 2);
+    cout << "Tic-Tac-Toe, now featuring lobotomized AI." << endl;
+    cout << "Type [yes] for 2-player mode or [AI] to play with a bot." << endl;
     cin >> user_initializer;
     if (user_initializer == "yes" || user_initializer == "y" || user_initializer == "Y"){
         while (checkWin(board) == 0) {
@@ -153,7 +157,6 @@ int main(){
             cout << "invalid input, exiting...";
             return 400;
         }
-        changeBoard(board, location_row, user_location_column, O_turn);
         if (changeBoard(board, location_row, user_location_column, O_turn) == 8008) {
             clearScreen();
             cout << "occupied spot, exiting..." << endl;
@@ -170,6 +173,59 @@ int main(){
         }
         else if (checkWin(board) == 2) {
             cout << "O wins." << endl;
+        }
+        else if (checkWin(board) == 3) {
+            cout << "Tied match." << endl;
+        }
+    }
+    else if (user_initializer == "AI" || user_initializer == "ai") {
+        while (checkWin(board) == 0) {
+            clearScreen();
+            printMatch(board);
+            game_turn = turnCheck(O_turn);
+            if (game_turn == "X") {
+                cout << "It is your turn." << endl;
+                cout << "Column[1,2,3]:";
+                cin >> user_location_column;
+                user_location_column = user_location_column - 1;
+                cout << "Row[A,B,C]:";
+                cin >> user_location_row;
+                location_row = letterToNumber(user_location_row);
+                if (location_row == 400) {
+                    clearScreen();
+                    cout << "invalid input, exiting...";
+                    return 400;
+                }
+                if (changeBoard(board, location_row, user_location_column, O_turn) == 8008) {
+                    clearScreen();
+                    cout << "occupied spot, exiting..." << endl;
+                    return 8008;
+                }
+            }
+            else if (game_turn == "O") {
+                while (true) {
+                    user_location_column = dist(rng);
+                    location_row = dist(rng);
+                    if (changeBoard(board, location_row, user_location_column, O_turn) != 8008) {
+                        break;
+                    }
+                }
+            }
+            else {
+                clearScreen();
+                cout << "god is dead.";
+                return 8008008;
+            }
+            board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
+            printMatch(board);
+            O_turn = !O_turn;
+        }
+
+        if (checkWin(board) == 1) {
+            cout << "You win!" << endl;
+        }
+        else if (checkWin(board) == 2) {
+            cout << "Bot wins." << endl;
         }
         else if (checkWin(board) == 3) {
             cout << "Tied match." << endl;
