@@ -1,8 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <random>
-
-// begin AI slop
+// ------------- begin AI slop ------------- 
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -12,8 +11,20 @@ void clearScreen() {
     std::cout << "Clear screen not supported on this OS" << endl;
 #endif
 }
-// end AI slop
-using namespace std;
+//  ------------- end AI slop ------------- 
+
+// Error codes are defined as follows:
+// ---------------------------------------------------------------------------------------------------------
+// | Before v1.1.0 | After v1.1.0 ||                           What Failed                                 |
+// ---------------------------------------------------------------------------------------------------------
+// |    400        |      -1      || Invalid input. (eg. input of "F" when expecting "A", "B" or "C";...)  |
+// |    8008       |      -2      || Trying to overwrite an occupied spot.                                 |
+// |    8008008    |     1024     || Impossible error code. If this error ever occurs, we are fucked.      |
+// ---------------------------------------------------------------------------------------------------------
+//
+
+
+using namespace std; // i'm a beginner deal with it
 
 void printMatch (int array[][3]) {
     string pp = "0";
@@ -56,7 +67,7 @@ int letterToNumber (string input) {
         return 2;
     }
     else {
-        return 400;
+        return -1;
     }
 }
 
@@ -70,9 +81,9 @@ int changeBoard(int array[][3], int row, int column, bool Oturn) {
         }
     }
     else {
-        return 8008;
+        return -2;
     }
-    return 8008008;
+    return 1024;
 }
 
 int checkWin(int array[][3]) {
@@ -152,15 +163,15 @@ int main(){
         cout << "Row[A,B,C]:";
         cin >> user_location_row;
         location_row = letterToNumber(user_location_row);
-        if (location_row == 400) {
+        if (location_row == -1) {
             clearScreen();
             cout << "invalid input, exiting...";
-            return 400;
+            return -1;
         }
-        if (changeBoard(board, location_row, user_location_column, O_turn) == 8008) {
+        if (changeBoard(board, location_row, user_location_column, O_turn) == -2) {
             clearScreen();
             cout << "occupied spot, exiting..." << endl;
-            return 8008;
+            return -2;
         }
         else {
             board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
@@ -187,26 +198,26 @@ int main(){
                 cout << "It is your turn." << endl;
                 cout << "Column[1,2,3]:";
                 cin >> user_location_column;
-                user_location_column = user_location_column - 1;
+                user_location_column = user_location_column - 1; //arrays start at zero because some smartass decided c++ isnt hard enough
                 cout << "Row[A,B,C]:";
                 cin >> user_location_row;
                 location_row = letterToNumber(user_location_row);
-                if (location_row == 400) {
+                if (location_row == -1) {
                     clearScreen();
                     cout << "invalid input, exiting...";
-                    return 400;
+                    return -1;
                 }
-                if (changeBoard(board, location_row, user_location_column, O_turn) == 8008) {
+                if (changeBoard(board, location_row, user_location_column, O_turn) == -2) {
                     clearScreen();
                     cout << "occupied spot, exiting..." << endl;
-                    return 8008;
+                    return -2;
                 }
             }
             else if (game_turn == "O") {
                 while (true) {
                     user_location_column = dist(rng);
                     location_row = dist(rng);
-                    if (changeBoard(board, location_row, user_location_column, O_turn) != 8008) {
+                    if (changeBoard(board, location_row, user_location_column, O_turn) != -2) {
                         break;
                     }
                 }
@@ -214,7 +225,7 @@ int main(){
             else {
                 clearScreen();
                 cout << "god is dead.";
-                return 8008008;
+                return 1024;
             }
             board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
             printMatch(board);
