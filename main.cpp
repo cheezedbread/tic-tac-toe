@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <random>
-// ------------- begin AI slop ------------- 
+// ------------- begin AI slop -------------
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -11,7 +11,7 @@ void clearScreen() {
     std::cout << "Clear screen not supported on this OS" << endl;
 #endif
 }
-//  ------------- end AI slop ------------- 
+//  ------------- end AI slop -------------
 
 // Error codes are defined as follows:
 // ---------------------------------------------------------------------------------------------------------
@@ -145,6 +145,7 @@ int main(){
     string user_initializer = "init";
     string game_turn = "init";
     bool O_turn = false;
+    int turns = 0;
     random_device rd;
     mt19937 rng(rd());
     uniform_int_distribution<int> dist(0, 2);
@@ -156,6 +157,7 @@ int main(){
         clearScreen();
         printMatch(board);
         game_turn = turnCheck(O_turn);
+        turns++;
         cout << "It is " << game_turn << "'s turn" << endl;
         cout << "Column[1,2,3]:";
         cin >> user_location_column;
@@ -180,13 +182,13 @@ int main(){
         O_turn = !O_turn;
         }
         if (checkWin(board) == 1) {
-            cout << "X wins." << endl;
+            cout << "X wins in " << turns << " turns." << endl;
         }
         else if (checkWin(board) == 2) {
-            cout << "O wins." << endl;
+            cout << "O wins in " << turns << " turns." << endl;
         }
         else if (checkWin(board) == 3) {
-            cout << "Tied match." << endl;
+            cout << "Tied match. (" << turns << " turns)" << endl;
         }
     }
     else if (user_initializer == "AI" || user_initializer == "ai") {
@@ -194,6 +196,7 @@ int main(){
             clearScreen();
             printMatch(board);
             game_turn = turnCheck(O_turn);
+            turns++;
             if (game_turn == "X") {
                 cout << "It is your turn." << endl;
                 cout << "Column[1,2,3]:";
@@ -233,13 +236,13 @@ int main(){
         }
 
         if (checkWin(board) == 1) {
-            cout << "You win!" << endl;
+            cout << "You won in " << turns << " turns!" << endl;
         }
         else if (checkWin(board) == 2) {
-            cout << "Bot wins." << endl;
+            cout << "Bot won in " << turns << " turns." << endl;
         }
         else if (checkWin(board) == 3) {
-            cout << "Tied match." << endl;
+            cout << "Tied match. (" << turns << " turns)" << endl;
         }
     }
     return 0;
