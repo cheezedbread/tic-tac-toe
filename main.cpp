@@ -188,7 +188,7 @@ int main(){
             cout << "O wins in " << turns << " turns." << endl;
         }
         else if (checkWin(board) == 3) {
-            cout << "Tied match. (" << turns << " turns.)" << endl;
+            cout << "Tied match. (" << turns << " turns)" << endl;
         }
     }
     else if (user_initializer == "AI" || user_initializer == "ai") {
