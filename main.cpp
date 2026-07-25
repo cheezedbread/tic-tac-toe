@@ -144,8 +144,8 @@ int main(){
     int user_location_column = 0;
     string user_initializer = "init";
     string game_turn = "init";
-    bool O_turn = false;
     int turns = 0;
+    bool O_turn = false;
     random_device rd;
     mt19937 rng(rd());
     uniform_int_distribution<int> dist(0, 2);
@@ -201,7 +201,7 @@ int main(){
                 cout << "It is your turn." << endl;
                 cout << "Column[1,2,3]:";
                 cin >> user_location_column;
-                user_location_column = user_location_column - 1; //arrays start at zero because some smartass decided c++ isnt hard enough
+                user_location_column = user_location_column - 1;
                 cout << "Row[A,B,C]:";
                 cin >> user_location_row;
                 location_row = letterToNumber(user_location_row);
@@ -224,11 +224,10 @@ int main(){
                         break;
                     }
                 }
-            }
-            else {
-                clearScreen();
-                cout << "god is dead.";
-                return 1024;
+                if (turns == 2 && changeBoard(board, 1 , 1 , O_turn) != -2) {
+                    user_location_column = 1;
+                    location_row = 1;
+                }
             }
             board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
             printMatch(board);
