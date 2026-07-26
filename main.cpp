@@ -261,28 +261,25 @@ int main(){
                     user_location_column = dist(rng);
                     location_row = dist(rng);
                     boardOverwriter(fake_board, board);
-                    if (turns <= 2) { //gamestate at move 2 aka first move, we execute the gambling loop with 2 random numbers as our row and col.
+                    if (turns < 5) {
+                        if (turns == 2 && changeBoard(board, 1 , 1 , O_turn) != -2) { //catches gamestate at move 2 and manually sets it to hit center if possible. if center is not possible, use random coords provided above.
+                            user_location_column = 1;
+                            location_row = 1;
+                        }
                         break;
                     }
-                    else if (turns >= 5 && changeBoard(board, location_row, user_location_column, O_turn) != -2) { //gamestate at 6 and beyond -> at least 2 pieces on board -> search for wins
+                    else if (changeBoard(board, location_row, user_location_column, O_turn) != -2) { //gamestate at 6 and beyond -> at least 2 pieces on board -> search for wins
                         fake_board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
                         if (checkWin(fake_board) == 2) {
+                            break;
+                        }
+                        else if (tries >= 50) {
                             break;
                         }
                         else {
                             tries++;
                         }
                     }
-                    else if (turns == 4) { //gamestate at move 4
-                        break;
-                    }
-                    else if (tries >= 50) { //if has tried 50 times, break from loop with random move. this is to prevent gambling forever for a move that doesnt exist
-                        break;//gambles 50 times, if youre INCREDIBLY unlucky the bot will fail
-                    }
-                }
-                if (turns == 2 && changeBoard(board, 1 , 1 , O_turn) != -2) { //catches gamestate at move 2 and manually sets it to hit center if possible. if center is not possible, use random coords provided above.
-                    user_location_column = 1;
-                    location_row = 1;
                 }
             }
             if (changeBoard(board, location_row, user_location_column, O_turn) == -2) {
@@ -290,10 +287,9 @@ int main(){
                     user_location_column = dist(rng);
                     location_row = dist(rng);
                 }
-
             }
             board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
-            boardOverwriter(fake_board, board); //reset fakeboard
+            boardOverwriter(fake_board, board);
             printMatch(board);
             O_turn = !O_turn;
             tries = 0;
