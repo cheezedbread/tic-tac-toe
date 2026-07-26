@@ -137,32 +137,68 @@ int checkWin(int array[][3]) {
     return 0;
 }
 
+void boardOverwriter(int victim[][3], int board[][3]) {
+    for (int a=0; a<3; a++) {
+        for (int b=0; b<3; b++) {
+            victim[a][b] = board[a][b];
+        }
+    }
+}
+
+void debug(int fake[][3], int board[][3], int column, int row, bool Oturn, int tries, int turns) {
+    cout << "------------START OF DEBUG SECTION------------" << endl;
+    cout << "Current board state:" << endl;
+    for (int a=0; a<3; a++) {
+        for (int b=0; b<3; b++) {
+            cout << "at a=" << a << " b=" << b << " val=" << board[a][b] << endl;
+        }
+    }
+    cout << "Current fake board state:" << endl;
+    for (int a=0; a<3; a++) {
+        for (int b=0; b<3; b++) {
+            cout << "at a=" << a << " b=" << b << " val=" << fake[a][b] << endl;
+        }
+    }
+    cout << "Input Column: " << column << " Input Row: " << row << endl;
+    cout << "Tries: " << tries << " Turns: " << turns << endl;
+    cout << "Oturn value: " << Oturn << endl;
+    cout << "-------------END OF DEBUG SECTION-------------" << endl;
+}
+
 int main(){
     int board[3][3]={0};
+    int fake_board[3][3]={0};
     string user_location_row = "init"; // has to be a string bc some bullshit with pointers happen using char and you cant input ABC into an integer
     int location_row = 0;// therefore the correct solution is to let the user input into a string and THEN internally convert back into an int via letterToNumber up there
     int user_location_column = 0;
     string user_initializer = "init";
     string game_turn = "init";
     int turns = 0;
+    int tries = 0;
     bool O_turn = false;
     random_device rd;
     mt19937 rng(rd());
     uniform_int_distribution<int> dist(0, 2);
-    cout << "Tic-Tac-Toe, now featuring lobotomized AI." << endl;
-    cout << "Type [yes] for 2-player mode or [AI] to play with a bot." << endl;
+    cout << " _   _                _                       _              " << endl;
+    cout << "| |_(_) ___          | |_ __ _  ___          | |_ ___   ___  " << endl;
+    cout << "| __| |/ __|  _____  | __/ _` |/ __|  _____  | __/ _ \\ / _ \\ " << endl;
+    cout << "| |_| | (__  |_____| | || (_| | (__  |_____| | || (_) |  __/ " << endl;
+    cout << " \\__|_|\\___|          \\__\\__,_|\\___|          \\__\\___/ \\___| " << endl;
+    cout << "-------------------------------------------------------------" << endl;
+    cout << "   Type [play] for 2-player mode or [AI] to play with a bot." << endl;
+    cout << "> ";
     cin >> user_initializer;
-    if (user_initializer == "yes" || user_initializer == "y" || user_initializer == "Y"){
+    if (user_initializer == "play" || user_initializer == "PLAY" || user_initializer == "p"){
         while (checkWin(board) == 0) {
         clearScreen();
         printMatch(board);
         game_turn = turnCheck(O_turn);
         turns++;
         cout << "It is " << game_turn << "'s turn" << endl;
-        cout << "Column[1,2,3]:";
+        cout << "Column [1,2,3]: ";
         cin >> user_location_column;
         user_location_column = user_location_column - 1; //arrays start at zero because some smartass decided c++ isnt hard enough
-        cout << "Row[A,B,C]:";
+        cout << "Row [A,B,C]: ";
         cin >> user_location_row;
         location_row = letterToNumber(user_location_row);
         if (location_row == -1) {
@@ -181,6 +217,9 @@ int main(){
         printMatch(board);
         O_turn = !O_turn;
         }
+        clearScreen();
+        printMatch(board);
+        cout << endl;
         if (checkWin(board) == 1) {
             cout << "X wins in " << turns << " turns." << endl;
         }
@@ -191,6 +230,7 @@ int main(){
             cout << "Tied match. (" << turns << " turns)" << endl;
         }
     }
+
     else if (user_initializer == "AI" || user_initializer == "ai") {
         while (checkWin(board) == 0) {
             clearScreen();
@@ -220,20 +260,47 @@ int main(){
                 while (true) {
                     user_location_column = dist(rng);
                     location_row = dist(rng);
-                    if (changeBoard(board, location_row, user_location_column, O_turn) != -2) {
+                    boardOverwriter(fake_board, board);
+                    if (turns <= 2) { //gamestate at move 2 aka first move, we execute the gambling loop with 2 random numbers as our row and col.
                         break;
                     }
+                    else if (turns >= 5 && changeBoard(board, location_row, user_location_column, O_turn) != -2) { //gamestate at 6 and beyond -> at least 2 pieces on board -> search for wins
+                        fake_board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
+                        if (checkWin(fake_board) == 2) {
+                            break;
+                        }
+                        else {
+                            tries++;
+                        }
+                    }
+                    else if (turns == 4) { //gamestate at move 4
+                        break;
+                    }
+                    else if (tries >= 50) { //if has tried 50 times, break from loop with random move. this is to prevent gambling forever for a move that doesnt exist
+                        break;//gambles 50 times, if youre INCREDIBLY unlucky the bot will fail
+                    }
                 }
-                if (turns == 2 && changeBoard(board, 1 , 1 , O_turn) != -2) {
+                if (turns == 2 && changeBoard(board, 1 , 1 , O_turn) != -2) { //catches gamestate at move 2 and manually sets it to hit center if possible. if center is not possible, use random coords provided above.
                     user_location_column = 1;
                     location_row = 1;
                 }
             }
+            if (changeBoard(board, location_row, user_location_column, O_turn) == -2) {
+                while (changeBoard(board, location_row, user_location_column, O_turn) == -2) {
+                    user_location_column = dist(rng);
+                    location_row = dist(rng);
+                }
+
+            }
             board[location_row][user_location_column] = changeBoard(board, location_row, user_location_column, O_turn);
+            boardOverwriter(fake_board, board); //reset fakeboard
             printMatch(board);
             O_turn = !O_turn;
+            tries = 0;
         }
-
+        clearScreen();
+        printMatch(board);
+        cout << endl;
         if (checkWin(board) == 1) {
             cout << "You won in " << turns << " turns!" << endl;
         }
