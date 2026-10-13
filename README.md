@@ -7,14 +7,16 @@ A simple terminal 3x3 Tic-Tac-Toe game offering an AI you can play against.
 - Tie detection
 - Linux and Windows terminal support.
 
-## Notes
-- Made as a learning project.
-- While the source code supports both the Linux and Windows terminal, packages from v1.0.1 onwards (including all future releases) can only run on Linux. Windows users are free to compile the project themselves using any C++17 compiler.
+## Platform Support
+- Source code: Linux and Windows
+- Prebuilt releases (v1.0.1 and later): Linux only
+- Windows users can compile the source code themselves
+  using a C++17-compatible compiler.
 
 ## To-do
 - [x] Add primitive AI bot that goes randomly
 - [x] Make bot prefer center
-- [ ] Make bot defend itself
+- [x] Make bot defend itself
 - [ ] Make bot win if possible
 - [ ] Minimax
 - [ ] Larger board sizes and custom win conditions (first to 5, first to 6, ...)
