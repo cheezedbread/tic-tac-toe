@@ -10,3 +10,13 @@ A simple beginner terminal Tic-Tac-Toe game written in C++.
 ## Notes
 - Made as a learning project.
 - While the source code supports both the Linux and Windows terminal, packages from v1.0.1 onwards (including all future releases) can only run on Linux. Windows users are free to compile the project themselves using any C++17 compiler.
+
+## To-do
+- ~~Add primitive AI bot that goes randomly~~
+- ~~Make bot prefer center~~
+- Make bot defend itself
+- Make bot win if possible
+- Minimax
+- Larger board sizes
+- Odd board sizes
+- Actual UI
